@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title> Multiplayer </title>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+      var socket = io(); 
+      
+      var random = Math.random();
+      
+      var happy = function() {
+          socket.emit("happy", { // "happy" is the type of message; you might also send an object with this.
+          reason:"it's my birthday" + random  // reason is an object that is sent to the server
+        });    
+      };
+      
+      socket.on("serverMsg", function(data) {
+        console.log(data.msg);
+      })
+    </script> <!-- up to 2:50 https://www.youtube.com/watch?v=Fn03ucDEcb4-->
+  </head>
+  
+  <body>
+    <p> Hello world! </p>
+    <button onclick = "happy()"> Happy </button>  <!-- Check with different tabs (because of the "random" variable)-->
+  </body>
+</html>
