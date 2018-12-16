@@ -2,11 +2,16 @@
 <html>
   <head>
     <title> Multiplayer </title>
+    
+    <canvas id = "ctx" width = "500" height = "500" style = "border:1px solid #000000;"> </canvas>
+    
     <script src="/socket.io/socket.io.js"></script>
     <script>
-      var socket = io(); 
+      var ctx = document.getElementById("ctx").getContext("2d");
+      ctx.font = "30px Arial"; 
+      var socket = io();  // calls the io function (on the server) and assigns the function to the variable server
       
-      var random = Math.random();
+/*      var random = Math.random();
       
       var happy = function() {
           socket.emit("happy", { // "happy" is the type of message; you might also send an object with this.
@@ -16,14 +21,17 @@
       
       socket.on("serverMsg", function(data) {
         console.log(data.msg);
-      })
-    </script> <!-- up to 3:05 https://www.youtube.com/watch?v=_GioD4LpjMw-->
+      }) */
+      socket.on("newPosition", function(data) { // whenever the client recieves a message from the server called newPosition
+        ctx.clearRect(0,0,500,500); // clears the canvas
+        ctx.fillText("P", data.x, data.y);
+      });
+    </script> <!-- up to 5:00 https://www.youtube.com/watch?v=_GioD4LpjMw-->
   </head>
   
   <body>
     <p> Hello world! </p>
     <button onclick = "happy()"> Happy </button>  <!-- Check with different tabs (because of the "random" variable)-->
-    
-    <canvas id = "ctx" width = "500" height = "500" style = "border:1px solid #000000;"> </canvas>
+ 
   </body>
 </html>

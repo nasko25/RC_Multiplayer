@@ -37,6 +37,7 @@ io.sockets.on("connection", function(socket) { // the function will be called, w
 });
 
 setInterval(function() { // this is a loop; the function will be called every frame at will run at 25 fps (it will be called every 40 milliseconds)
+  var pack = []; // every frame a package called pack is created; it will be send to every player connected
   for (var i in SOCKET_LIST) {
     var socket = SOCKET_LIST[i];
     socket.x++;
