@@ -36,18 +36,23 @@ io.sockets.on("connection", function(socket) { // the function will be called, w
   
 });
 
-setInterval(function() { // this is a loop; the function will be called every frame at will run at 25 fps (it will be called every 40 milliseconds)
-  var pack = []; // every frame a package called pack is created; it will be send to every player connected
+setInterval(function() { // this is a loop; the function will be called every frame and will run at 25 fps (it will be called every 40 milliseconds)
+  var pack = []; // every frame a package called pack is created; it will be send to every player connected & will conatin info about every connected player.
   for (var i in SOCKET_LIST) {
+    // console.log(Object.keys(SOCKET_LIST).length + " " + i) // this logs the length of the array SOCKET_LIST (it is an object, so we need the Object.keys...) and i.
     var socket = SOCKET_LIST[i];
     socket.x++;
     socket.y++;
-    socket.emit("newPosition", {
+    pack.push({
       x:socket.x,
       y:socket.y
     });
   }
-  
+  for (var j in SOCKET_LIST) { 
+    var socket = SOCKET_LIST[j];
+    socket.emit("newPositions", pack);
+  }
+ 
 }, 1000/25);
 
 /*

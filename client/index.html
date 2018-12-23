@@ -22,11 +22,13 @@
       socket.on("serverMsg", function(data) {
         console.log(data.msg);
       }) */
-      socket.on("newPosition", function(data) { // whenever the client recieves a message from the server called newPosition
+      socket.on("newPositions", function(data) { // whenever the client recieves a message from the server called newPosition
         ctx.clearRect(0,0,500,500); // clears the canvas
-        ctx.fillText("P", data.x, data.y);
+        for(var i = 0; i < data.length; i++){
+          ctx.fillText("P", data[i].x, data[i].y);
+        }
       });
-    </script> <!-- up to 5:00 https://www.youtube.com/watch?v=_GioD4LpjMw-->
+    </script> <!-- up to 6:50 https://www.youtube.com/watch?v=_GioD4LpjMw-->
   </head>
   
   <body>
