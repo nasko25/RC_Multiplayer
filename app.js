@@ -22,6 +22,7 @@ io.sockets.on("connection", function(socket) { // the function will be called, w
   socket.id = Math.random(); // this assigns a unique id to the newly created socket. 
   socket.x = 0;
   socket.y = 0;   // assign x and y parameters to the socket. 
+  socket.number = "" + Math.floor(10 * Math.random()); // every socket will have a random int associated with it. 
   SOCKET_LIST[socket.id] = socket; // add the socket to the list of sockets. 
   
   socket.on("happy", function(data){    // this is listening for an emitted "happy" message from the client, and executes the function, if there is one.
@@ -32,6 +33,12 @@ io.sockets.on("connection", function(socket) { // the function will be called, w
   // you can also emit from the server (with socket.io), and listen on the client
   socket.emit("serverMsg", {
     msg:"Server says hello"
+  });
+  
+  
+  // when a player disconnects, delete him from the socket list
+  socket.on("disconnect", function() { // the disconnect event is done automatically
+    delete SOCKET_LIST[socket.id];
   });
   
 });
@@ -45,7 +52,8 @@ setInterval(function() { // this is a loop; the function will be called every fr
     socket.y++;
     pack.push({
       x:socket.x,
-      y:socket.y
+      y:socket.y,
+      number:socket.number
     });
   }
   for (var j in SOCKET_LIST) { 
