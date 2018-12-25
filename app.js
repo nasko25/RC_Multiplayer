@@ -22,8 +22,25 @@ var Player = function(id){
     x:250,
     y:250,
     id:id,
-    number: "" + Math.floor(10 * Math.random()) // every player has a random int associated with it. 
+    number: "" + Math.floor(10 * Math.random()), // every player has a random int associated with it. 
+    pressingRight: false,
+    pressingLeft: false,
+    pressingUp: false,
+    pressingDown: false,
+    maxSpd: 10
   }
+  
+  self.updatePosition = function() { // the updatePosition function will be called every frame
+    if (self.pressingRight)
+      self.x += self.maxSpd;
+    if (self.pressingLeft)
+      self.x -= self.maxSpd;    
+    if (self.pressingUp)
+      self.y -= self.maxSpd;
+    if (self.pressingDown)
+      self.y += self.maxSpd;
+  }
+  
   return self;
 };
 
@@ -54,6 +71,17 @@ io.sockets.on("connection", function(socket) { // the function will be called, w
     delete PLAYER_LIST[socket.id];
   });
   
+  socket.on("keyPress", function(data){
+    if(data.inputId === "left")
+      player.pressingLeft = data.state;
+    else if(data.inputId === "right")
+      player.pressingRight = data.state;
+    else if(data.inputId === "up")
+      player.pressingUp = data.state;
+    else if(data.inputId === "down")
+      player.pressingDown = data.state;
+  })
+  
 });
 
 setInterval(function() { // this is a loop; the function will be called every frame and will run at 25 fps (it will be called every 40 milliseconds)
@@ -61,8 +89,7 @@ setInterval(function() { // this is a loop; the function will be called every fr
   for (var i in PLAYER_LIST) {
     // console.log(Object.keys(SOCKET_LIST).length + " " + i) // this logs the length of the array SOCKET_LIST (it is an object, so we need the Object.keys...) and i.
     var player = PLAYER_LIST[i];
-    player.x++;
-    player.y++;
+    player.updatePosition();
     pack.push({
       x:player.x,
       y:player.y,
