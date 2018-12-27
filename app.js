@@ -48,7 +48,7 @@ var Player = function(id){
   var super_update = self.update;
   self.update = function() {
     self.updateSpd();
-    super_update(); // this is like calling super.update - it will call the function from the parent class. 
+    super_update(); // this is like calling super.update() - it will call the function from the parent class. 
   }
   
   self.updateSpd = function() { // the updatePosition function will be called every frame
@@ -104,6 +104,42 @@ Player.update = function() {
   return pack;
 }
 
+var Bullet = function(angle) {
+  var self = Entity();
+  self.id = Math.random();
+  self.spdX = Math.cos(angle/180*Math.PI) * 10;
+  self.spdY = Math.sin(angle/180*Math.PI) * 10;
+  
+  self.timer = 0;
+  self.toRemove = false;
+  var super_update = self.update;
+  self.update = function() {
+    if (self.timer++ > 100)
+      self.toRemove = true;
+    super_update();
+  }
+  Bullet.list[self.id] = self;
+  return self;
+}
+Bullet.list = {};
+
+Bullet.update = function() { // TODO bullets are never deleted
+  if (Math.random() < 0.1) {
+    Bullet(Math.random()*360);
+  }
+  
+  var pack = [];
+  for(var i in Bullet.list) {
+    var bullet = Bullet.list[i];
+    bullet.update();
+    pack.push({
+      x:bullet.x,
+      y:bullet.y
+    }) 
+  }
+ return pack;
+}
+
 var io = require("socket.io")(serv, {}); // loads the file ("socket.io") and initilizes it; it returns an io object that 
 // has all the functionalities of the socket.io library
 io.sockets.on("connection", function(socket) { // the function will be called, whenever there is a connection to the server.
@@ -133,8 +169,11 @@ io.sockets.on("connection", function(socket) { // the function will be called, w
 });
 
 setInterval(function() { // this is a loop; the function will be called every frame and will run at 25 fps (it will be called every 40 milliseconds)
-  var pack = Player.update();
- 
+  var pack = {
+    player:Player.update(),
+    bullet:Bullet.update()
+  } 
+  
   for (var j in SOCKET_LIST) { 
     var socket = SOCKET_LIST[j];
     socket.emit("newPositions", pack);

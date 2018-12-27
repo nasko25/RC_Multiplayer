@@ -24,8 +24,11 @@
       }) */
       socket.on("newPositions", function(data) { // whenever the client recieves a message from the server called newPosition
         ctx.clearRect(0,0,500,500); // clears the canvas
-        for(var i = 0; i < data.length; i++){
-          ctx.fillText(data[i].number, data[i].x, data[i].y); // will write the random integer number assosiated with the player at coordinates x and y that are calculated on the server 
+        for(var i = 0; i < data.player.length; i++){
+          ctx.fillText(data.player[i].number, data.player[i].x, data.player[i].y); // will write the random integer number assosiated with the player at coordinates x and y that are calculated on the server 
+        }
+         for(var i = 0; i < data.bullet.length; i++){
+          ctx.fillRect(data.bullet[i].x-5, data.bullet[i].y-5, 10, 10); // will draw a rectangle with wight and height of 10
         }
       });
       
@@ -50,7 +53,7 @@
         else if (event.keyCode === 87)  // w
           socket.emit("keyPress", {inputId: "up", state: false});        
       }
-    </script> <!-- up to 9:16 https://www.youtube.com/watch?v=Tm-PXo9udWQ-->
+    </script> <!-- up to 0:00 https://www.youtube.com/watch?v=N3NE1Vo3J-w -->
   </head>
   
   <body>
