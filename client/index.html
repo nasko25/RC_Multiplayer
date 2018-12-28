@@ -5,8 +5,21 @@
     
     <canvas id = "ctx" width = "500" height = "500" style = "border:1px solid #000000;"> </canvas>
     
+    <div id = "chat-text" style = "width:500px; height: 100px; overflow-y: scroll;">
+      <div>
+         Hello!
+      </div>
+    </div>
+    <form id = "chat-form">
+      <input id = "chat-input" type = "text" style = "width: 500px;"> </input>
+    </form>
+    
+    
     <script src="/socket.io/socket.io.js"></script>
     <script>
+      var chatText = document.getElementById("chat-text");
+      var chatInput = document.getElementById("chat-input");
+      var chatForm = document.getElementById("chat-form");
       var ctx = document.getElementById("ctx").getContext("2d");
       ctx.font = "30px Arial"; 
       var socket = io();  // calls the io function (on the server) and assigns the function to the variable server
@@ -32,6 +45,14 @@
         }
       });
       
+      socket.on("addToChat", function(data){   // will be called whenever the player recieves a chat message from the server
+        chatText.innerHTML += "<div>" + data + "</div>";      // TODO on the server: var lt = /</g, 
+    //gt = />/g, 
+  //  ap = /'/g, 
+   // ic = /"/g;
+//value = value.toString().replace(lt, "&lt;").replace(gt, "&gt;").replace(ap, "&#39;").replace(ic, "&#34;");  to prevent XSS
+      })
+      
       document.onkeydown = function() { // the function is called whenever the player presses a key down
         if(event.keyCode === 68) // d
           socket.emit("keyPress", {inputId: "right", state: true});
@@ -53,7 +74,7 @@
         else if (event.keyCode === 87)  // w
           socket.emit("keyPress", {inputId: "up", state: false});        
       }
-    </script> <!-- up to 0:00 https://www.youtube.com/watch?v=N3NE1Vo3J-w -->
+    </script> <!-- up to 3:08 https://www.youtube.com/watch?v=N3NE1Vo3J-w -->
   </head>
   
   <body>

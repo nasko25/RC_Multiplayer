@@ -123,7 +123,7 @@ var Bullet = function(angle) {
 }
 Bullet.list = {};
 
-Bullet.update = function() { // TODO bullets are never deleted
+Bullet.update = function() { 
   if (Math.random() < 0.1) {
     Bullet(Math.random()*360);
   }
@@ -136,6 +136,9 @@ Bullet.update = function() { // TODO bullets are never deleted
       x:bullet.x,
       y:bullet.y
     }) 
+    if (bullet.toRemove) {
+      delete Bullet.list[i];
+    }
   }
  return pack;
 }
