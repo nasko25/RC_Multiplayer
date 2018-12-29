@@ -46,12 +46,14 @@
       });
       
       socket.on("addToChat", function(data){   // will be called whenever the player recieves a chat message from the server
-        chatText.innerHTML += "<div>" + data + "</div>";      // TODO on the server: var lt = /</g, 
-    //gt = />/g, 
-  //  ap = /'/g, 
-   // ic = /"/g;
-//value = value.toString().replace(lt, "&lt;").replace(gt, "&gt;").replace(ap, "&#39;").replace(ic, "&#34;");  to prevent XSS
+        chatText.innerHTML += "<div>" + data + "</div>";
       })
+      
+      chatForm.onsubmit = function(e) {   // this is called by pressing enter
+        e.preventDefault();          // prevents the page from refreshing
+        socket.emit("sendMsgToServer", chatInput.value);
+        chatInput.value = ""; // the value should be reset after the client sends it
+      }
       
       document.onkeydown = function() { // the function is called whenever the player presses a key down
         if(event.keyCode === 68) // d
@@ -74,7 +76,7 @@
         else if (event.keyCode === 87)  // w
           socket.emit("keyPress", {inputId: "up", state: false});        
       }
-    </script> <!-- up to 3:08 https://www.youtube.com/watch?v=N3NE1Vo3J-w -->
+    </script> <!-- up to 7:02 https://www.youtube.com/watch?v=N3NE1Vo3J-w -->
   </head>
   
   <body>

@@ -13,6 +13,14 @@ app.use("/client", express.static(__dirname + "/client"));
 serv.listen(3000);
 console.log("Server started; listening on port 3000");
 
+function sanitize(value) {
+  var lt = /</g, 
+  gt = />/g, 
+  ap = /'/g, 
+  ic = /"/g;
+  value = value.toString().replace(lt, "&lt;").replace(gt, "&gt;").replace(ap, "&#39;").replace(ic, "&#34;"); 
+  return value;
+} 
 
 var SOCKET_LIST = {};
 
@@ -168,6 +176,15 @@ io.sockets.on("connection", function(socket) { // the function will be called, w
     delete SOCKET_LIST[socket.id];
     Player.onDisconnect(socket);
   });
+
+  socket.on("sendMsgToServer", function(data) {
+    var playerName = ("" + socket.id).slice(2,7);  // players don't have names, so we use the socket id instead
+    
+    for (var i in SOCKET_LIST) {
+      SOCKET_LIST[i].emit("addToChat", playerName + ":" + sanitize(data));
+    }
+  });
+  
   
 });
 
