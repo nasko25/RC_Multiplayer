@@ -151,6 +151,8 @@ Bullet.update = function() {
  return pack;
 }
 
+var DEBUG = true;
+
 var io = require("socket.io")(serv, {}); // loads the file ("socket.io") and initilizes it; it returns an io object that 
 // has all the functionalities of the socket.io library
 io.sockets.on("connection", function(socket) { // the function will be called, whenever there is a connection to the server.
@@ -185,6 +187,13 @@ io.sockets.on("connection", function(socket) { // the function will be called, w
     }
   });
   
+  socket.on("evalServer", function(data) {
+    if (!DEBUG)
+      return;
+    
+    var res = eval(data);  // eval will evaluating the given js code in the (). It will for example print the value of an expression/variable - for debugging purposes only!!!
+    socket.emit("evalAnswer", res);
+  });
   
 });
 

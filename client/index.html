@@ -47,11 +47,18 @@
       
       socket.on("addToChat", function(data){   // will be called whenever the player recieves a chat message from the server
         chatText.innerHTML += "<div>" + data + "</div>";
-      })
+      });
+      
+      socket.on("evalAnswer", function(data){   // will be called whenever the player recieves a chat message from the server
+        console.log(data);
+      });
       
       chatForm.onsubmit = function(e) {   // this is called by pressing enter
         e.preventDefault();          // prevents the page from refreshing
-        socket.emit("sendMsgToServer", chatInput.value);
+        if(chatInput.value[0] === "/")  // this is for debugging purposes only. You can send /something to the server from the chat, and it will send back the value of this something. 
+          socket.emit("evalServer", chatInput.value.slice(1));   // chatInput.value.slice(1) will send the value of chatInput.value, but without the first charater. 
+        else
+          socket.emit("sendMsgToServer", chatInput.value);
         chatInput.value = ""; // the value should be reset after the client sends it
       }
       
@@ -76,7 +83,7 @@
         else if (event.keyCode === 87)  // w
           socket.emit("keyPress", {inputId: "up", state: false});        
       }
-    </script> <!-- up to 7:02 https://www.youtube.com/watch?v=N3NE1Vo3J-w -->
+    </script> <!-- up to 0:00 https://www.youtube.com/watch?v=S-l3EWhBh9c -->
   </head>
   
   <body>
