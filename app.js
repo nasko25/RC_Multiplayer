@@ -51,12 +51,24 @@ var Player = function(id){
     self.pressingLeft = false;
     self.pressingUp = false;
     self.pressingDown = false;
+    self.pressingAttack = false;
+    self.mouseAngle = 0;
     self.maxSpd = 10;
   
   var super_update = self.update;
   self.update = function() {
     self.updateSpd();
     super_update(); // this is like calling super.update() - it will call the function from the parent class. 
+    
+    if (self.pressingAttack) {
+      self.shootBullet(self.mouseAngle);
+    }
+  }
+  
+  self.shootBullet = function(angle) {
+      var b = Bullet(angle);
+      b.x = self.x;
+      b.y = self.y;
   }
   
   self.updateSpd = function() { // the updatePosition function will be called every frame
@@ -90,6 +102,10 @@ Player.onConnect = function(socket) {
       player.pressingUp = data.state;
     else if(data.inputId === "down")
       player.pressingDown = data.state;
+    else if(data.inputId === "attack")
+      player.pressingAttack = data.state;
+    else if(data.inputId === "mouseAngle")
+      player.mouseAngle = data.state;    
   });
 }
 
@@ -132,10 +148,6 @@ var Bullet = function(angle) {
 Bullet.list = {};
 
 Bullet.update = function() { 
-  if (Math.random() < 0.1) {
-    Bullet(Math.random()*360);
-  }
-  
   var pack = [];
   for(var i in Bullet.list) {
     var bullet = Bullet.list[i];
