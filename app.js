@@ -39,6 +39,9 @@ var Entity = function() { // Entity is a class cointaing general information for
     self.x += self.spdX;
     self.y += self.spdY;
   }
+  self.getDistance = function(pt) {
+    return Math.sqrt(Math.pow(self.x-pt.x, 2) + Math.pow(self.y-pt.y, 2));
+  }
   return self
 }
 
@@ -61,12 +64,14 @@ var Player = function(id){
     super_update(); // this is like calling super.update() - it will call the function from the parent class. 
     
     if (self.pressingAttack) {
-      self.shootBullet(self.mouseAngle);
+      // for (var i = -3; i < 3; i++)
+      //  self.shootBullet(i * 10 + self.mouseAngle);   may be a special attack
+     self.shootBullet(self.mouseAngle); 
     }
   }
   
   self.shootBullet = function(angle) {
-      var b = Bullet(angle);
+      var b = Bullet(self.id, angle);
       b.x = self.x;
       b.y = self.y;
   }
@@ -128,12 +133,12 @@ Player.update = function() {
   return pack;
 }
 
-var Bullet = function(angle) {
+var Bullet = function(parent, angle) {
   var self = Entity();
   self.id = Math.random();
   self.spdX = Math.cos(angle/180*Math.PI) * 10;
   self.spdY = Math.sin(angle/180*Math.PI) * 10;
-  
+  self.parent = parent; 
   self.timer = 0;
   self.toRemove = false;
   var super_update = self.update;
@@ -141,6 +146,14 @@ var Bullet = function(angle) {
     if (self.timer++ > 100)
       self.toRemove = true;
     super_update();
+    
+    for (var i in Player.list) {
+      var p = Player.list[i];
+      if(self.getDistance(p) < 32 && self.parent !== p.id) {  // TODO 32 is hard-coded
+        // handle collision with HP.
+        self.toRemove = true;
+      }
+    }
   }
   Bullet.list[self.id] = self;
   return self;
@@ -152,12 +165,14 @@ Bullet.update = function() {
   for(var i in Bullet.list) {
     var bullet = Bullet.list[i];
     bullet.update();
-    pack.push({
-      x:bullet.x,
-      y:bullet.y
-    }) 
     if (bullet.toRemove) {
       delete Bullet.list[i];
+    }
+    else {
+      pack.push({
+        x:bullet.x,
+        y:bullet.y
+      }) 
     }
   }
  return pack;
