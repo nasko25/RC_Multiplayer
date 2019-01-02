@@ -187,7 +187,20 @@ io.sockets.on("connection", function(socket) { // the function will be called, w
   socket.id = Math.random(); // this assigns a unique id to the newly created socket.  
   SOCKET_LIST[socket.id] = socket; // add the socket to the list of sockets. 
   
-  Player.onConnect(socket);
+  socket.on("signIn", function(data) {
+    if(data.username === "bob" && data.password === "asdf") {
+        Player.onConnect(socket);
+        socket.emit("signInResponse", {
+          success: true
+        })
+    }
+    else {
+       socket.emit("signInResponse", {
+          success:false
+        })
+    }
+  });
+  
   
   socket.on("happy", function(data){    // this is listening for an emitted "happy" message from the client, and executes the function, if there is one.
     // data ^ is the recieved object that the client sent. (reason, in this case, is contained in the data object) 
