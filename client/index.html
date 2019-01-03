@@ -42,6 +42,22 @@
         })
       }
       
+       signDivSignUp.onclick = function() {
+        socket.emit("signUp", {
+          username:signDivUsername.value,
+          password:signDivPassword.value
+        })
+      }
+      
+      socket.on("signUpResponse", function(data) {
+        if(data.success) {
+          alert("Sign up successful");
+        }
+        else {
+          alert("Sign up unsuccessful.")
+        }
+      })
+       
       // TODO the user can bypass this; think of other ways
       socket.on("signInResponse", function(data) {
         if(data.success) {
@@ -86,7 +102,7 @@
         chatText.innerHTML += "<div>" + data + "</div>";
       });
       
-      socket.on("evalAnswer", function(data){   // will be called whenever the player recieves a chat message from the server
+      socket.on("evalAnswer", function(data){  
         console.log(data);
       });
       
@@ -135,7 +151,7 @@
         var angle = Math.atan2(y,x) / Math.PI * 180;
         socket.emit("keyPress", {inputId: "mouseAngle", state:angle});
       }
-    </script> <!-- up to 4:15 https://www.youtube.com/watch?v=ZoviAuHZ6IQ -->
+    </script> <!-- up to 0:00 https://www.youtube.com/watch?v=E-YYRLQSVDI -->
   </head>
   
   <body>

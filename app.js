@@ -180,6 +180,33 @@ Bullet.update = function() {
 
 var DEBUG = true;
 
+var USERS = {
+  // username:password
+  "asd":"asdf",
+  "asdf":"asdf",
+  "a":"a"
+}
+
+var isValidPassword = function(data, cb) {
+  // whenever there is an interval between when you call the function, and the function returns a value (like when reading from a database) js needs callback to work. 
+  setTimeout(function() {
+    cb(USERS[data.username] === data.password);
+  }, 10);
+}
+
+var isUsernameTaken = function(data, cb) {
+  setTimeout(function() {
+    cb(USERS[data.username]);
+  }, 10);
+}
+
+var addUser = function(data, cb) {
+  setTimeout(function() {
+    USERS[data.username] = data.password;
+    cb();
+   }, 10);
+}
+
 var io = require("socket.io")(serv, {}); // loads the file ("socket.io") and initilizes it; it returns an io object that 
 // has all the functionalities of the socket.io library
 io.sockets.on("connection", function(socket) { // the function will be called, whenever there is a connection to the server.
@@ -188,17 +215,37 @@ io.sockets.on("connection", function(socket) { // the function will be called, w
   SOCKET_LIST[socket.id] = socket; // add the socket to the list of sockets. 
   
   socket.on("signIn", function(data) {
-    if(data.username === "bob" && data.password === "asdf") {
-        Player.onConnect(socket);
-        socket.emit("signInResponse", {
+    isValidPassword(data, function(res) {
+      if(res) {
+          Player.onConnect(socket);
+          socket.emit("signInResponse", {
           success: true
         })
-    }
-    else {
-       socket.emit("signInResponse", {
+      }
+      else {
+          socket.emit("signInResponse", {
           success:false
         })
+      }
+    })
+  });
+  
+   socket.on("signUp", function(data) {
+    isUsernameTaken(data, function(res) {
+      if(res) {
+        socket.emit("signUpResponse", {
+          success: false
+      })
     }
+      else {
+        addUser(data, function() {
+           socket.emit("signUpResponse", {
+              success:true
+          })
+        });
+      }
+    });
+
   });
   
   
