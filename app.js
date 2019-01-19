@@ -1,6 +1,12 @@
 // How express works for multiple pages, etc.
 // console.log("Hello world");
 
+var mongojs = require("mongojs");
+var db = mongojs("localhost:27017/Game", ["account", "progress"]);  // mongod --smallfiles --dbpath /home/cabox/workspace/db   to start the database
+// mongo - to query; use <name> 
+
+// for example: db.account.insert({username: "b", password:"bb"});
+
 var express = require("express");
 var app = express();
 var serv = require("http").Server(app);
