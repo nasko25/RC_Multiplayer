@@ -195,22 +195,32 @@ var USERS = {
 
 var isValidPassword = function(data, cb) {
   // whenever there is an interval between when you call the function, and the function returns a value (like when reading from a database) js needs callback to work. 
-  setTimeout(function() {
-    cb(USERS[data.username] === data.password);
-  }, 10);
+  db.account.find({username: data.username, password: data.password}, function(err, res) {   // the err will return an error that may have occured while reading, while res is the result (returns an array with
+    // every document that matched the query)// TODO sql injection?
+    if (res.length > 0) { // check if there is at least one username with that password
+      cb(true);
+    }
+    else {
+      cb(false);
+    }
+  });
 }
 
 var isUsernameTaken = function(data, cb) {
-  setTimeout(function() {
-    cb(USERS[data.username]);
-  }, 10);
+ db.account.find({username: data.username}, function(err, res) {   // TODO sql injection?
+    if (res.length > 0) { 
+      cb(true);
+    }
+    else {
+      cb(false);
+    }
+  });
 }
 
 var addUser = function(data, cb) {
-  setTimeout(function() {
-    USERS[data.username] = data.password;
-    cb();
-   }, 10);
+   db.account.insert({username: data.username, password:data.password}, function(err) {   
+      cb();
+  });
 }
 
 var io = require("socket.io")(serv, {}); // loads the file ("socket.io") and initilizes it; it returns an io object that 
