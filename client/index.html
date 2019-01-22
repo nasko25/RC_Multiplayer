@@ -68,15 +68,7 @@
           alert("Sign in unsuccessful.")
         }
       })
-      
-      // game
-      var chatText = document.getElementById("chat-text");
-      var chatInput = document.getElementById("chat-input");
-      var chatForm = document.getElementById("chat-form");
-      var ctx = document.getElementById("ctx").getContext("2d");
-      ctx.font = "30px Arial"; 
-
-      
+            
 /*      var random = Math.random();
       
       var happy = function() {
@@ -88,15 +80,12 @@
       socket.on("serverMsg", function(data) {
         console.log(data.msg);
       }) */
-      socket.on("newPositions", function(data) { // whenever the client recieves a message from the server called newPosition
-        ctx.clearRect(0,0,500,500); // clears the canvas
-        for(var i = 0; i < data.player.length; i++){
-          ctx.fillText(data.player[i].number, data.player[i].x, data.player[i].y); // will write the random integer number assosiated with the player at coordinates x and y that are calculated on the server 
-        }
-         for(var i = 0; i < data.bullet.length; i++){
-          ctx.fillRect(data.bullet[i].x-5, data.bullet[i].y-5, 10, 10); // will draw a rectangle with wight and height of 10
-        }
-      });
+      
+      // chat
+      var chatText = document.getElementById("chat-text");
+      var chatInput = document.getElementById("chat-input");
+      var chatForm = document.getElementById("chat-form");
+     
       
       socket.on("addToChat", function(data){   // will be called whenever the player recieves a chat message from the server
         chatText.innerHTML += "<div>" + data + "</div>";
@@ -114,6 +103,61 @@
           socket.emit("sendMsgToServer", chatInput.value);
         chatInput.value = ""; // the value should be reset after the client sends it
       }
+      
+      // game 
+      
+      var ctx = document.getElementById("ctx").getContext("2d");
+      ctx.font = "30px Arial"; 
+
+      var Player = function(initPack) {
+        var self = {};
+        self.id = initPack.id;
+        self.number = initPack.number;
+        self.x = initPack.x;
+        self.y = initPack.y;
+        Player.list[self.id] = self;
+        return self;
+      }
+      
+      Player.list = {};
+      
+      var Bullet = function(initPack) {
+        var self = {};
+        self.id = initPack.id;
+        self.x = initPack.x;
+        self.y = initPack.y;
+        Bullet.list[self.id] = self;
+        return self;
+      }
+      Bullet.list = {};
+      
+      // init package - when a new player or bullet is created 
+          // when new stuff is created; contains all the data 
+      socket.on("init", function(data) {
+        // { player : [{id:123, x:0, y:0}, {id:1337, x:0, y:0}], bullet : []}
+        for (var i = 0; i < data.player.length; i++) {
+          new Player(data.player[i]);
+        }
+        for (var i = 0; i < data.bullet.length; i++) {
+          new Bullet(data.bullet[i]);
+        }
+      });
+      // update package
+          // sent every frame; sends only the difference
+       
+      
+      // remove package 
+          // notify the client if the bullet/player got removed; sends only the id of the player/bullet
+        
+      socket.on("newPositions", function(data) { // whenever the client recieves a message from the server called newPosition
+        ctx.clearRect(0,0,500,500); // clears the canvas
+        for(var i = 0; i < data.player.length; i++){
+          ctx.fillText(data.player[i].number, data.player[i].x, data.player[i].y); // will write the random integer number assosiated with the player at coordinates x and y that are calculated on the server 
+        }
+         for(var i = 0; i < data.bullet.length; i++){
+          ctx.fillRect(data.bullet[i].x-5, data.bullet[i].y-5, 10, 10); // will draw a rectangle with wight and height of 10
+        }
+      });
       
       document.onkeydown = function() { // the function is called whenever the player presses a key down
         if(event.keyCode === 68) // d
@@ -151,7 +195,7 @@
         var angle = Math.atan2(y,x) / Math.PI * 180;
         socket.emit("keyPress", {inputId: "mouseAngle", state:angle});
       }
-    </script> <!-- up to 11:03 https://www.youtube.com/watch?v=E-YYRLQSVDI -->
+    </script> <!-- up to 4:47 https://www.youtube.com/watch?v=mpwkD9-rDnc -->
 <!-- mongoDB https://www.youtube.com/watch?v=E-YYRLQSVDI -->
   </head>
   
