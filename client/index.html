@@ -134,7 +134,7 @@
       // init package - when a new player or bullet is created 
           // when new stuff is created; contains all the data 
       socket.on("init", function(data) {
-        // { player : [{id:123, x:0, y:0}, {id:1337, x:0, y:0}], bullet : []}
+        // { player : [{id:123, number: "1", x:0, y:0}, {id:1337, number: "7", x:0, y:0}], bullet : []}
         for (var i = 0; i < data.player.length; i++) {
           new Player(data.player[i]);
         }
@@ -144,12 +144,55 @@
       });
       // update package
           // sent every frame; sends only the difference
-       
-      
+      socket.on("update", function(data) {
+        // { player : [{id:123, x:0, y:0}, {id:1337, x:0, y:0}], bullet : []}
+        for (var i = 0; i < data.player.length; i++) {
+          var pack = data.player[i];
+          var p = Player.list[pack.id];
+          if (p) {
+            if (pack.x !== undefined)
+              p.x = pack.x;
+            if (pack.y !== undefined)
+              p.y = pack.y;
+          }
+        }
+        
+        for (var i = 0; i < data.bullet.length; i++) {
+          var pack = data.bullet[i];
+          var b = Bullet.list[pack.id];
+          if(b) {
+            if(pack.x !== undefined)
+              b.x = pack.x;
+            if(pack.y !== undefined)
+              b.y = pack.y;
+          }
+        }
+      });
+     
       // remove package 
           // notify the client if the bullet/player got removed; sends only the id of the player/bullet
-        
-      socket.on("newPositions", function(data) { // whenever the client recieves a message from the server called newPosition
+     socket.on("remove", function(data) {
+       // {player:[123], bullet:[12,23]}
+       for (var i = 0; i < data.player.length; i++) {
+         delete Player.list[data.player[i]];
+       }
+       for (var i = 0; i <  data.bullet.length; i++) {
+         delete Bullet.list[data.bullet[i]];
+       }
+     });
+      
+      setInterval(function() {
+        ctx.clearRect(0, 0, 500, 500);
+        for (var i in Player.list){
+          ctx.fillText(Player.list[i].number, Player.list[i].x, Player.list[i].y);
+        }
+        for (var i in Bullet.list) {
+          ctx.fillRect(Bullet.list[i].x-5, Bullet.list[i].y-5, 10, 10);
+        }
+      }, 40);
+      
+      
+      /* socket.on("newPositions", function(data) { // whenever the client recieves a message from the server called newPosition
         ctx.clearRect(0,0,500,500); // clears the canvas
         for(var i = 0; i < data.player.length; i++){
           ctx.fillText(data.player[i].number, data.player[i].x, data.player[i].y); // will write the random integer number assosiated with the player at coordinates x and y that are calculated on the server 
@@ -158,7 +201,7 @@
           ctx.fillRect(data.bullet[i].x-5, data.bullet[i].y-5, 10, 10); // will draw a rectangle with wight and height of 10
         }
       });
-      
+      */ 
       document.onkeydown = function() { // the function is called whenever the player presses a key down
         if(event.keyCode === 68) // d
           socket.emit("keyPress", {inputId: "right", state: true});
@@ -195,7 +238,7 @@
         var angle = Math.atan2(y,x) / Math.PI * 180;
         socket.emit("keyPress", {inputId: "mouseAngle", state:angle});
       }
-    </script> <!-- up to 4:47 https://www.youtube.com/watch?v=mpwkD9-rDnc -->
+    </script> <!-- up to 0:00 https://www.youtube.com/watch?v=WpOyK57FrvE -->
 <!-- mongoDB https://www.youtube.com/watch?v=E-YYRLQSVDI -->
   </head>
   

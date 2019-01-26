@@ -98,6 +98,12 @@ var Player = function(id){
       self.spdY = 0;
   }
   Player.list[id] = self; // just by creating the player, it is added to the list. 
+  initPack.player.push({
+    id:self.id,
+    x:self.x,
+    y:self.y,
+    number: self.number
+  });
   return self;
 };
 Player.list = {} // there is only one list for every player
@@ -121,6 +127,7 @@ Player.onConnect = function(socket) {
 }
 
 Player.onDisconnect = function(socket) {
+  removePack.player.push(socket.id);
   delete Player.list[socket.id];
 }
 
@@ -131,9 +138,9 @@ Player.update = function() {
     var player = Player.list[i];
     player.update();
     pack.push({
+      id:player.id,
       x:player.x,
-      y:player.y,
-      number:player.number
+      y:player.y
     });
   }
   return pack;
@@ -162,6 +169,11 @@ var Bullet = function(parent, angle) {
     }
   }
   Bullet.list[self.id] = self;
+  initPack.bullet.push({
+    id:self.id/*,
+    x:self.x,
+    y:self.y
+ */  });    // TODO should they be sent when the bullet is initilized?
   return self;
 }
 Bullet.list = {};
@@ -172,10 +184,12 @@ Bullet.update = function() {
     var bullet = Bullet.list[i];
     bullet.update();
     if (bullet.toRemove) {
+      removePack.bullet.push(bullet.id);
       delete Bullet.list[i];
     }
     else {
       pack.push({
+        id:bullet.id,
         x:bullet.x,
         y:bullet.y
       }) 
@@ -300,6 +314,9 @@ io.sockets.on("connection", function(socket) { // the function will be called, w
   
 });
 
+var initPack = {player:[], bullet:[]};
+var removePack = {player:[], bullet:[]};
+
 setInterval(function() { // this is a loop; the function will be called every frame and will run at 25 fps (it will be called every 40 milliseconds)
   var pack = {
     player:Player.update(),
@@ -308,9 +325,22 @@ setInterval(function() { // this is a loop; the function will be called every fr
   
   for (var j in SOCKET_LIST) { 
     var socket = SOCKET_LIST[j];
-    socket.emit("newPositions", pack);
+    socket.emit("update", pack);
+    // TODO: make the sending of initPack and removePack event based, so that if one player gets removed, an event will be triggered that sends a remove for that player
+    if (initPack.player.length !== 0 || initPack.bullet.length !== 0) 
+    {  
+      socket.emit("init", initPack); 
+    }
+    if (removePack.player.length !== 0 || removePack.bullet.length !== 0) 
+    {  
+      socket.emit("remove", removePack);
+    }
+    
   }
- 
+ initPack.player = [];
+ initPack.bullet = [];
+ removePack.player = [];
+ removePack.bullet = [];
 }, 1000/25);
 
 /*
