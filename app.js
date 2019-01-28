@@ -97,13 +97,26 @@ var Player = function(id){
     else 
       self.spdY = 0;
   }
-  Player.list[id] = self; // just by creating the player, it is added to the list. 
-  initPack.player.push({
+  
+  self.getInitPack = function() {
+    return {
     id:self.id,
     x:self.x,
     y:self.y,
     number: self.number
-  });
+    }
+  }
+  
+  self.getUpdatePack = function() {
+    return {
+      id:self.id,
+      x:self.x,
+      y:self.y
+    }
+  }
+  
+  Player.list[id] = self; // just by creating the player, it is added to the list. 
+  initPack.player.push(self.getInitPack());
   return self;
 };
 Player.list = {} // there is only one list for every player
@@ -124,6 +137,20 @@ Player.onConnect = function(socket) {
     else if(data.inputId === "mouseAngle")
       player.mouseAngle = data.state;    
   });
+
+  
+  socket.emit("init", {
+    player:Player.getAllInitPacks(),
+    bullet:Bullet.getAllInitPacks()
+  })
+  
+}
+
+Player.getAllInitPacks = function() {
+  var players = [];
+  for (var i in Player.list)
+    players.push(Player.list[i].getInitPack());
+  return players;
 }
 
 Player.onDisconnect = function(socket) {
@@ -137,11 +164,7 @@ Player.update = function() {
     // console.log(Object.keys(SOCKET_LIST).length + " " + i) // this logs the length of the array SOCKET_LIST (it is an object, so we need the Object.keys...) and i.
     var player = Player.list[i];
     player.update();
-    pack.push({
-      id:player.id,
-      x:player.x,
-      y:player.y
-    });
+    pack.push(player.getUpdatePack());
   }
   return pack;
 }
@@ -168,12 +191,25 @@ var Bullet = function(parent, angle) {
       }
     }
   }
-  Bullet.list[self.id] = self;
-  initPack.bullet.push({
+  
+  self.getInitPack = function() {
+    return {
     id:self.id/*,
     x:self.x,
     y:self.y
- */  });    // TODO should they be sent when the bullet is initilized?
+ */ }; // TODO should they be sent when the bullet is initilized?
+  }
+  
+  self.getUpdatePack = function() {
+    return {
+        id:self.id,
+        x:self.x,
+        y:self.y
+    };
+  }
+  
+  Bullet.list[self.id] = self;
+  initPack.bullet.push(self.getInitPack());    // TODO should they be sent when the bullet is initilized?
   return self;
 }
 Bullet.list = {};
@@ -188,14 +224,17 @@ Bullet.update = function() {
       delete Bullet.list[i];
     }
     else {
-      pack.push({
-        id:bullet.id,
-        x:bullet.x,
-        y:bullet.y
-      }) 
+      pack.push(bullet.getUpdatePack()); 
     }
   }
  return pack;
+}
+
+Bullet.getAllInitPacks = function() {
+  var bullets = [];
+  for (var j in Bullet.list)
+    bullets.push(Bullet.list[j].getInitPack());
+  return bullets;
 }
 
 var DEBUG = true;
