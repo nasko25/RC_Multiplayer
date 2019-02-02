@@ -106,6 +106,15 @@
       
       // game 
       
+      var Img = {};
+      Img.player = new Image();
+      Img.player.src = "client/img/player.png";
+      Img.bullet = new Image();
+      Img.bullet.src = "client/img/bullet.png";
+      Img.map = new Image();
+      Img.map.src = "client/img/map.png";
+      
+      
       var ctx = document.getElementById("ctx").getContext("2d");
       ctx.font = "30px Arial"; 
 
@@ -121,10 +130,19 @@
         
         self.draw = function() {
           var hpWidth = 30*self.hp/self.hpMax;
+          // hp bar
+          ctx.fillStyle = "red";
           ctx.fillRect(self.x - hpWidth/2, self.y - 40, hpWidth, 4);
-          ctx.fillText(self.number, self.x, self.y);
           
-          ctx.fillText(self.score, self.x, self.y - 60);
+          //player
+          // ctx.fillText(self.number, self.x, self.y);
+          var width = Img.player.width*2;
+          var height = Img.player.height*2;
+                                    // cropping the image                   //
+          ctx.drawImage(Img.player, 0, 0, Img.player.width, Img.player.height, self.x-width/2, self.y-height/2, width, height);
+          
+          //score
+          // ctx.fillText(self.score, self.x, self.y - 60);
         }
         
         Player.list[self.id] = self;
@@ -140,7 +158,11 @@
         self.y = initPack.y;
         
         self.draw = function() {
-          ctx.fillRect(self.x-5, self.y-5, 10, 10);
+          // ctx.fillRect(self.x-5, self.y-5, 10, 10);
+          var width = Img.bullet.width/2;
+          var height = Img.bullet.height/2;
+                                   // cropping the image                    //
+          ctx.drawImage(Img.bullet, 0, 0, Img.bullet.width, Img.bullet.height, self.x-width/2, self.y-height/2, width, height);
         }
         
         Bullet.list[self.id] = self;
@@ -148,9 +170,14 @@
       }
       Bullet.list = {};
       
+      var selfId = null;
+      
       // init package - when a new player or bullet is created 
           // when new stuff is created; contains all the data 
       socket.on("init", function(data) {
+        if(data.selfId) {
+          selfId = data.selfId;
+        }
         // { player : [{id:123, number: "1", x:0, y:0}, {id:1337, number: "7", x:0, y:0}], bullet : []}
         for (var i = 0; i < data.player.length; i++) {
           new Player(data.player[i]);
@@ -203,7 +230,12 @@
      });
       
       setInterval(function() {
+        if (!selfId) { // then you have not recieved an init package => do not draw
+          return;
+        }
         ctx.clearRect(0, 0, 500, 500);
+        drawMap();
+        drawScore();
         for (var i in Player.list){
           Player.list[i].draw();
         }
@@ -212,6 +244,14 @@
         }
       }, 40);
       
+      var drawMap = function() {
+        ctx.drawImage(Img.map, 0, 0);
+      }
+      
+      var drawScore = function() {
+        ctx.fillStyle = "white";
+        ctx.fillText(Player.list[selfId].score, 0, 30);
+      }
       
       /* socket.on("newPositions", function(data) { // whenever the client recieves a message from the server called newPosition
         ctx.clearRect(0,0,500,500); // clears the canvas
@@ -259,7 +299,7 @@
         var angle = Math.atan2(y,x) / Math.PI * 180;
         socket.emit("keyPress", {inputId: "mouseAngle", state:angle});
       }
-    </script> <!-- up to 0:00 https://www.youtube.com/watch?v=2jbItozWQis -->
+    </script> <!-- up to 7:59 https://www.youtube.com/watch?v=2jbItozWQis -->
 <!-- mongoDB https://www.youtube.com/watch?v=E-YYRLQSVDI -->
   </head>
   

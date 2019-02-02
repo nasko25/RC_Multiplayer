@@ -148,6 +148,7 @@ Player.onConnect = function(socket) {
 
   
   socket.emit("init", {
+    selfId:socket.id,
     player:Player.getAllInitPacks(),
     bullet:Bullet.getAllInitPacks()
   })
