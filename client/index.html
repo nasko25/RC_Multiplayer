@@ -25,6 +25,8 @@
     
     <script src="/socket.io/socket.io.js"></script>
     <script>      
+      var WIDTH = 500;
+      var HEIGHT = 500;
       var socket = io();  // calls the io function (on the server) and assigns the function to the variable server
       
       // sign
@@ -129,17 +131,22 @@
         self.score = initPack.score;
         
         self.draw = function() {
+          // relative x and y
+          var x = self.x - Player.list[selfId].x + WIDTH/2;
+          var y = self.y - Player.list[selfId].y + HEIGHT/2;
+          
           var hpWidth = 30*self.hp/self.hpMax;
           // hp bar
           ctx.fillStyle = "red";
-          ctx.fillRect(self.x - hpWidth/2, self.y - 40, hpWidth, 4);
+          ctx.fillRect(x - hpWidth/2, y - 40, hpWidth, 4);
           
           //player
           // ctx.fillText(self.number, self.x, self.y);
           var width = Img.player.width*2;
           var height = Img.player.height*2;
+          
                                     // cropping the image                   //
-          ctx.drawImage(Img.player, 0, 0, Img.player.width, Img.player.height, self.x-width/2, self.y-height/2, width, height);
+          ctx.drawImage(Img.player, 0, 0, Img.player.width, Img.player.height, x-width/2, y-height/2, width, height);
           
           //score
           // ctx.fillText(self.score, self.x, self.y - 60);
@@ -161,8 +168,13 @@
           // ctx.fillRect(self.x-5, self.y-5, 10, 10);
           var width = Img.bullet.width/2;
           var height = Img.bullet.height/2;
+          
+          // draw the Bullet elative to the player
+          var x = self.x - Player.list[selfId].x + WIDTH/2;
+          var y = self.y - Player.list[selfId].y + HEIGHT/2;
+          
                                    // cropping the image                    //
-          ctx.drawImage(Img.bullet, 0, 0, Img.bullet.width, Img.bullet.height, self.x-width/2, self.y-height/2, width, height);
+          ctx.drawImage(Img.bullet, 0, 0, Img.bullet.width, Img.bullet.height, x-width/2, y-height/2, width, height);
         }
         
         Bullet.list[self.id] = self;
@@ -245,7 +257,9 @@
       }, 40);
       
       var drawMap = function() {
-        ctx.drawImage(Img.map, 0, 0);
+        var x = WIDTH/2 - Player.list[selfId].x;
+        var y = HEIGHT/2 - Player.list[selfId].y;
+        ctx.drawImage(Img.map, x, y);
       }
       
       var drawScore = function() {
@@ -299,7 +313,7 @@
         var angle = Math.atan2(y,x) / Math.PI * 180;
         socket.emit("keyPress", {inputId: "mouseAngle", state:angle});
       }
-    </script> <!-- up to 7:59 https://www.youtube.com/watch?v=2jbItozWQis -->
+    </script> <!-- up to 0:00 https://www.youtube.com/watch?v=-N9XXDpde8g -->
 <!-- mongoDB https://www.youtube.com/watch?v=E-YYRLQSVDI -->
   </head>
   
