@@ -30,13 +30,24 @@ function sanitize(value) {
 
 var SOCKET_LIST = {};
 
-var Entity = function() { // Entity is a class cointaing general information for both Player and Bullet.
+var Entity = function(param) { // Entity is a class cointaing general information for both Player and Bullet.
   var self = { // this is a constructor
     x:250,
     y:250,
     spdX:0,
     spdY:0,
-    id:""
+    id:"",
+    map:"forest"
+  }
+  if (param) {
+    if(param.x)
+      self.x = param.x;
+    if(param.y)
+      self.y = param.y;
+    if(param.map)
+      self.map = param.map;
+    if(param.id)
+      self.id = param.id;
   }
   self.update = function() {
     self.updatePosition();
@@ -51,10 +62,9 @@ var Entity = function() { // Entity is a class cointaing general information for
   return self
 }
 
-var Player = function(id){ 
-  var self = Entity(); 
+var Player = function(param){ 
+  var self = Entity(param); 
     // adding properties on top of the Entity:
-    self.id = id;
     self.number = "" + Math.floor(10 * Math.random()); // every player has a random int associated with it. 
     self.pressingRight = false;
     self.pressingLeft = false;
@@ -80,9 +90,13 @@ var Player = function(id){
   }
   
   self.shootBullet = function(angle) {
-      var b = Bullet(self.id, angle);
-      b.x = self.x;
-      b.y = self.y;
+      Bullet({
+        parent:self.id, 
+        angle:angle,
+        x:self.x,
+        y:self.y,
+        map:self.map
+      });
   }
   
   self.updateSpd = function() { // the updatePosition function will be called every frame
@@ -109,7 +123,8 @@ var Player = function(id){
     number: self.number,
     hp: self.hp,
     hpMax:self.hpMax,
-    score:self.score
+    score:self.score,
+    map:self.map
     }
   }
   
@@ -123,13 +138,20 @@ var Player = function(id){
     }
   }
   
-  Player.list[id] = self; // just by creating the player, it is added to the list. 
+  Player.list[self.id] = self; // just by creating the player, it is added to the list. 
   initPack.player.push(self.getInitPack());
   return self;
 };
 Player.list = {} // there is only one list for every player
 Player.onConnect = function(socket) {
-  var player = Player(socket.id);
+  var map = "forest";
+  if(Math.random() < 0.5) {
+    map = "field";
+  }
+  var player = Player({
+    id:socket.id,
+    map:map
+  });
     
   socket.on("keyPress", function(data){ // adds a listener for every keyPress package
     if(data.inputId === "left")
@@ -178,12 +200,13 @@ Player.update = function() {
   return pack;
 }
 
-var Bullet = function(parent, angle) {
-  var self = Entity();
+var Bullet = function(param) {
+  var self = Entity(param);
   self.id = Math.random();
-  self.spdX = Math.cos(angle/180*Math.PI) * 10;
-  self.spdY = Math.sin(angle/180*Math.PI) * 10;
-  self.parent = parent; 
+  self.angle = param.angle;
+  self.spdX = Math.cos(param.angle/180*Math.PI) * 10;
+  self.spdY = Math.sin(param.angle/180*Math.PI) * 10;
+  self.parent = param.parent; 
   self.timer = 0;
   self.toRemove = false;
   var super_update = self.update;
@@ -194,7 +217,7 @@ var Bullet = function(parent, angle) {
     
     for (var i in Player.list) {
       var p = Player.list[i];
-      if(self.getDistance(p) < 32 && self.parent !== p.id) {  // TODO 32 is hard-coded
+      if(self.getDistance(p) < 32 && self.parent !== p.id && self.map === p.map) {  // TODO 32 is hard-coded
         // handle collision with HP.
         p.hp--;
 
@@ -215,10 +238,12 @@ var Bullet = function(parent, angle) {
   
   self.getInitPack = function() {
     return {
-    id:self.id/*,
+    id:self.id, /*
     x:self.x,
     y:self.y
- */ }; // TODO should they be sent when the bullet is initilized?
+ */ 
+    map:self.map
+    }; // TODO should they be sent when the bullet is initilized?
   }
   
   self.getUpdatePack = function() {

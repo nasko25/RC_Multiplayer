@@ -113,9 +113,11 @@
       Img.player.src = "client/img/player.png";
       Img.bullet = new Image();
       Img.bullet.src = "client/img/bullet.png";
-      Img.map = new Image();
-      Img.map.src = "client/img/map.png";
-      
+      Img.map = {};
+      Img.map["forest"] = new Image();
+      Img.map["forest"].src = "client/img/map.png";
+      Img.map["field"] = new Image();
+      Img.map["field"].src = "client/img/map2.png";      
       
       var ctx = document.getElementById("ctx").getContext("2d");
       ctx.font = "30px Arial"; 
@@ -129,8 +131,11 @@
         self.hp = initPack.hp;
         self.hpMax = initPack.hpMax;
         self.score = initPack.score;
+        self.map = initPack.map;
         
         self.draw = function() {
+          if(Player.list[selfId].map !== self.map)
+            return;
           // relative x and y
           var x = self.x - Player.list[selfId].x + WIDTH/2;
           var y = self.y - Player.list[selfId].y + HEIGHT/2;
@@ -163,9 +168,12 @@
         self.id = initPack.id;
         self.x = initPack.x;
         self.y = initPack.y;
+        self.map = initPack.map;
         
         self.draw = function() {
           // ctx.fillRect(self.x-5, self.y-5, 10, 10);
+          if(Player.list[selfId].map !== self.map)
+            return;
           var width = Img.bullet.width/2;
           var height = Img.bullet.height/2;
           
@@ -257,9 +265,10 @@
       }, 40);
       
       var drawMap = function() {
-        var x = WIDTH/2 - Player.list[selfId].x;
-        var y = HEIGHT/2 - Player.list[selfId].y;
-        ctx.drawImage(Img.map, x, y);
+        var player = Player.list[selfId];
+        var x = WIDTH/2 - player.x;
+        var y = HEIGHT/2 - player.y;
+        ctx.drawImage(Img.map[player.map], x, y);
       }
       
       var drawScore = function() {
@@ -313,7 +322,7 @@
         var angle = Math.atan2(y,x) / Math.PI * 180;
         socket.emit("keyPress", {inputId: "mouseAngle", state:angle});
       }
-    </script> <!-- up to 0:00 https://www.youtube.com/watch?v=-N9XXDpde8g -->
+    </script> <!-- up to 0:00 https://www.youtube.com/watch?v=TfCzBZ9ro0c -->
 <!-- mongoDB https://www.youtube.com/watch?v=E-YYRLQSVDI -->
   </head>
   
