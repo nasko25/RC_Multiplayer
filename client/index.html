@@ -11,9 +11,10 @@
     </div>
     
     <div id = "gameDiv" style = "display:none;">
-      <canvas id = "ctx" width = "500" height = "500" style = "border:1px solid #000000;"> </canvas>
-
-      <div id = "chat-text" style = "width:500px; height: 100px; overflow-y: scroll;">
+      <canvas id = "ctx" width = "500" height = "500" style = "position: absolute; left: 8px; top: 8px; border:1px solid #000000;"> </canvas>
+      <canvas id = "ctx-ui" width = "500" height = "500" style = "position:absolute; z-index: 2; left: 8px; top: 8px; border:1px solid #000000;"> </canvas>
+      
+      <div id = "chat-text" style = "margin-top: 500px; width:500px; height: 100px; overflow-y: scroll;">
         <div>
            Hello!
         </div>
@@ -120,8 +121,10 @@
       Img.map["field"].src = "client/img/map2.png";      
       
       var ctx = document.getElementById("ctx").getContext("2d");
-      ctx.font = "30px Arial"; 
-
+      var ctxUI = document.getElementById("ctx-ui").getContext("2d");
+      ctxUI.font = "30px Arial"; 
+      
+      
       var Player = function(initPack) {
         var self = {};
         self.id = initPack.id;
@@ -272,9 +275,15 @@
       }
       
       var drawScore = function() {
-        ctx.fillStyle = "white";
-        ctx.fillText(Player.list[selfId].score, 0, 30);
+        if(lastScore === Player.list[selfId].score) {
+          return;
+        }
+        lastScore = Player.list[selfId].score;
+        ctxUI.clearRect(0, 0, 500, 500);
+        ctxUI.fillStyle = "white";
+        ctxIO.fillText(Player.list[selfId].score, 0, 30);
       }
+      var lastScore = null;
       
       /* socket.on("newPositions", function(data) { // whenever the client recieves a message from the server called newPosition
         ctx.clearRect(0,0,500,500); // clears the canvas
@@ -322,7 +331,7 @@
         var angle = Math.atan2(y,x) / Math.PI * 180;
         socket.emit("keyPress", {inputId: "mouseAngle", state:angle});
       }
-    </script> <!-- up to 0:00 https://www.youtube.com/watch?v=TfCzBZ9ro0c -->
+    </script> <!-- up to 0:00 https://www.youtube.com/watch?v=bZ6C04L2xO8 -->
 <!-- mongoDB https://www.youtube.com/watch?v=E-YYRLQSVDI -->
   </head>
   

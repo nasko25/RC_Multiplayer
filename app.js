@@ -1,6 +1,27 @@
 // How express works for multiple pages, etc.
 // console.log("Hello world");
 
+// npm install v8-profiler - a server side profiler
+// var profiler = require("v8-profiler");
+// var fs = require("fs")  - file system (included in node.js, like http);
+
+/*
+  var startProfiling = function(duration) {
+    profiler.startProfiling("1", true); // id = 1
+    setTimeout(function() {
+      var profile1 = profiler.stopProfiling("1");
+      
+      profile1.export(function(error, result) {
+        fs.writeFile("./profile.cpuprofile", result);
+        profile1.delete();
+        console.log("Profile saved.");
+      })
+    }, duration);
+  }
+
+startProfiling(10000);
+*/
+
 var mongojs = require("mongojs");
 var db = mongojs("localhost:27017/Game", ["account", "progress"]);  // mongod --smallfiles --dbpath /home/cabox/workspace/db   to start the database
 // mongo - to query; use <name> 
@@ -393,7 +414,7 @@ io.sockets.on("connection", function(socket) { // the function will be called, w
     if (!DEBUG)
       return;
     
-    var res = eval(data);  // eval will evaluating the given js code in the (). It will for example print the value of an expression/variable - for debugging purposes only!!!
+    var res = eval(data);  // eval will evaluate the given js code in the (). It will for example print the value of an expression/variable - for debugging purposes only!!!
     socket.emit("evalAnswer", res);
   });
   
