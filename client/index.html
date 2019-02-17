@@ -9,19 +9,23 @@
       <button id = "signDiv-signIn"> Sign In </button>
       <button id = "signDiv-signUp"> Sign Up </button>
     </div>
-    
+    <!--- TODO add a css file --->
     <div id = "gameDiv" style = "display:none;">
-      <canvas id = "ctx" width = "500" height = "500" style = "position: absolute; left: 8px; top: 8px; border:1px solid #000000;"> </canvas>
-      <canvas id = "ctx-ui" width = "500" height = "500" style = "position:absolute; z-index: 2; left: 8px; top: 8px; border:1px solid #000000;"> </canvas>
-      
-      <div id = "chat-text" style = "margin-top: 500px; width:500px; height: 100px; overflow-y: scroll;">
-        <div>
-           Hello!
-        </div>
+      <div id = "game" style = "position:absolute; width:500px; height: 500px;">
+        <canvas id = "ctx" width = "500" height = "500" style = "position: absolute; border:1px solid #000000;"> </canvas>
+        <canvas id = "ctx-ui" width = "500" height = "500" style = "position:absolute; z-index: 2; border:1px solid #000000;"> </canvas>
       </div>
-      <form id = "chat-form">
-        <input id = "chat-input" type = "text" style = "width: 500px;"> </input>
-      </form>
+      
+      <div id = "belowGame" style = "margin-top: 520px;">
+        <div id = "chat-text" style = "width:500px; height: 100px; overflow-y: scroll;">
+          <div>
+             Hello!
+          </div>
+        </div>
+        <form id = "chat-form">
+          <input id = "chat-input" type = "text" style = "width: 500px;"> </input>
+        </form>
+      </div>
     </div>
     
     <script src="/socket.io/socket.io.js"></script>
@@ -180,7 +184,7 @@
           var width = Img.bullet.width/2;
           var height = Img.bullet.height/2;
           
-          // draw the Bullet elative to the player
+          // draw the Bullet relative to the player
           var x = self.x - Player.list[selfId].x + WIDTH/2;
           var y = self.y - Player.list[selfId].y + HEIGHT/2;
           
@@ -281,7 +285,7 @@
         lastScore = Player.list[selfId].score;
         ctxUI.clearRect(0, 0, 500, 500);
         ctxUI.fillStyle = "white";
-        ctxIO.fillText(Player.list[selfId].score, 0, 30);
+        ctxUI.fillText(Player.list[selfId].score, 0, 30);
       }
       var lastScore = null;
       
@@ -331,7 +335,7 @@
         var angle = Math.atan2(y,x) / Math.PI * 180;
         socket.emit("keyPress", {inputId: "mouseAngle", state:angle});
       }
-    </script> <!-- up to 0:00 https://www.youtube.com/watch?v=bZ6C04L2xO8 -->
+    </script> <!-- up to 8:24 https://www.youtube.com/watch?v=bZ6C04L2xO8 -->
 <!-- mongoDB https://www.youtube.com/watch?v=E-YYRLQSVDI -->
   </head>
   
