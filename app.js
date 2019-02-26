@@ -155,7 +155,8 @@ var Player = function(param){
       x:self.x,
       y:self.y,
       hp: self.hp,
-      score: self.score
+      score: self.score,
+      map:self.map
     }
   }
   
@@ -189,6 +190,12 @@ Player.onConnect = function(socket) {
       player.mouseAngle = data.state;    
   });
 
+  socket.on("changeMap", function() {
+    if (player.map === "field")
+      player.map = "forest";
+    else 
+      player.map = "field";
+  });
   
   socket.emit("init", {
     selfId:socket.id,
