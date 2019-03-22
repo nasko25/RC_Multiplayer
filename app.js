@@ -37,8 +37,8 @@ app.get("/", function(req, res) {
 });
 app.use("/client", express.static(__dirname + "/client"));
 
-serv.listen(3000);
-console.log("Server started; listening on port 3000");
+serv.listen(80);
+console.log("Server started; listening on port 80");
 
 function sanitize(value) {
   var lt = /</g, 
@@ -87,6 +87,7 @@ var Player = function(param){
   var self = Entity(param); 
     // adding properties on top of the Entity:
     self.number = "" + Math.floor(10 * Math.random()); // every player has a random int associated with it. 
+	self.username = param.username;
     self.pressingRight = false;
     self.pressingLeft = false;
     self.pressingUp = false;
@@ -165,12 +166,13 @@ var Player = function(param){
   return self;
 };
 Player.list = {} // there is only one list for every player
-Player.onConnect = function(socket) {
+Player.onConnect = function(socket, username) {
   var map = "forest";
   if(Math.random() < 0.5) {
     map = "field";
   }
   var player = Player({
+	username: username, 
     id:socket.id,
     map:map
   });
@@ -196,6 +198,14 @@ Player.onConnect = function(socket) {
     else 
       player.map = "field";
   });
+  
+  
+  socket.on("sendMsgToServer", function(data) {
+    for (var i in SOCKET_LIST) {
+      SOCKET_LIST[i].emit("addToChat", player.username + ":" + sanitize(data));
+    }
+  });
+  
   
   socket.emit("init", {
     selfId:socket.id,
@@ -357,10 +367,10 @@ io.sockets.on("connection", function(socket) { // the function will be called, w
   socket.id = Math.random(); // this assigns a unique id to the newly created socket.  
   SOCKET_LIST[socket.id] = socket; // add the socket to the list of sockets. 
   
-  socket.on("signIn", function(data) {
+  socket.on("signIn", function(data) { // {username, password}
     isValidPassword(data, function(res) {
       if(res) {
-          Player.onConnect(socket);
+          Player.onConnect(socket, data.username);
           socket.emit("signInResponse", {
           success: true
         })
@@ -409,14 +419,6 @@ io.sockets.on("connection", function(socket) { // the function will be called, w
     Player.onDisconnect(socket);
   });
 
-  socket.on("sendMsgToServer", function(data) {
-    var playerName = ("" + socket.id).slice(2,7);  // players don't have names, so we use the socket id instead
-    
-    for (var i in SOCKET_LIST) {
-      SOCKET_LIST[i].emit("addToChat", playerName + ":" + sanitize(data));
-    }
-  });
-  
   socket.on("evalServer", function(data) {
     if (!DEBUG)
       return;

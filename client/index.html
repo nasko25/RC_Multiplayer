@@ -35,7 +35,7 @@
       </div>
     </div>
     
-    <script src="/socket.io/socket.io.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"></script>
     <script>      
       var WIDTH = 500;
       var HEIGHT = 500;
@@ -349,7 +349,12 @@
         var angle = Math.atan2(y,x) / Math.PI * 180;
         socket.emit("keyPress", {inputId: "mouseAngle", state:angle});
       }
-    </script> <!-- up to 0:00 https://www.youtube.com/watch?v=MUEkqN7yHu8 -->
+
+      document.oncontextmenu = function(event) {
+		event.preventDefault();	    
+      }
+
+    </script> <!-- up to 5:26 https://www.youtube.com/watch?v=MUEkqN7yHu8 -->
 <!-- mongoDB https://www.youtube.com/watch?v=E-YYRLQSVDI -->
   </head>
   
