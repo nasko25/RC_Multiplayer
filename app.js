@@ -206,7 +206,21 @@ Player.onConnect = function(socket, username) {
     }
   });
   
-  
+ socket.on("sendPmToServer", function(data) { // data: {username, message}
+    var recipientSocket = null;
+    for (var i in Player.list) {
+	if (Player.list[i].username === data.username)
+	    recipientSocket.SOCKET_LIST[i]; // i is the id of the player
+    }
+    if (recipientSocket === null) {
+    	socket.emit("addToChat", "The player " + data.username + " is not online.");
+    }
+    else {
+    	recipientSocket.emit("addToChat", "From " + player.username + ":" + data.message);
+   	socket.emit("addToChat", "To " + data.username + ":" + data.message);
+    }
+ });
+
   socket.emit("init", {
     selfId:socket.id,
     player:Player.getAllInitPacks(),
