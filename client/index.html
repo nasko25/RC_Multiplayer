@@ -113,7 +113,14 @@
         e.preventDefault();          // prevents the page from refreshing
         if(chatInput.value[0] === "/")  // this is for debugging purposes only. You can send /something to the server from the chat, and it will send back the value of this something. 
           socket.emit("evalServer", chatInput.value.slice(1));   // chatInput.value.slice(1) will send the value of chatInput.value, but without the first charater. 
-        else
+	else if (chatInput.value[0] === "@") {
+		// @username,message
+		socket.emit("sendPmToServer", {
+			username: chatInput.value.slice(1, chatInput.value.indexOf(",")),
+			message: chatInput.value.slice(chatInput.value.indexOf(",") + 1)
+		});	      
+	}
+	else 
           socket.emit("sendMsgToServer", chatInput.value);
         chatInput.value = ""; // the value should be reset after the client sends it
       }
@@ -354,7 +361,7 @@
 		event.preventDefault();	    
       }
 
-    </script> <!-- up to 9:55 https://www.youtube.com/watch?v=MUEkqN7yHu8 -->
+    </script> <!-- up to 0:00 https://www.youtube.com/watch?v=6ztcI568yho -->
 <!-- mongoDB https://www.youtube.com/watch?v=E-YYRLQSVDI -->
   </head>
   

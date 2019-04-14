@@ -210,7 +210,7 @@ Player.onConnect = function(socket, username) {
     var recipientSocket = null;
     for (var i in Player.list) {
 	if (Player.list[i].username === data.username)
-	    recipientSocket.SOCKET_LIST[i]; // i is the id of the player
+	    recipientSocket = SOCKET_LIST[i]; // i is the id of the player
     }
     if (recipientSocket === null) {
     	socket.emit("addToChat", "The player " + data.username + " is not online.");
