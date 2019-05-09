@@ -2,6 +2,14 @@
 var initPack = {player:[], bullet:[]};
 var removePack = {player:[], bullet:[]};
 
+function sanitize(value) {
+  var lt = /</g, 
+  gt = />/g, 
+  ap = /'/g, 
+  ic = /"/g;
+  value = value.toString().replace(lt, "&lt;").replace(gt, "&gt;").replace(ap, "&#39;").replace(ic, "&#34;"); 
+  return value;
+}
 
 Entity = function(param) { // Entity is a class cointaing general information for both Player and Bullet.
   var self = { // this is a constructor
@@ -76,6 +84,7 @@ Player = function(param){
     self.hp = 10;
     self.hpMax = 10;
     self.score = 0;
+	self.inventory = new Inventory(param.socket);
   
   var super_update = self.update;
   self.update = function() {
@@ -152,7 +161,8 @@ Player.onConnect = function(socket, username) {
   var player = Player({
 	username: username, 
     id:socket.id,
-    map:map
+    map:map,
+	socket:socket
   });
     
   socket.on("keyPress", function(data){ // adds a listener for every keyPress package

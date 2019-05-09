@@ -29,6 +29,7 @@ var db = mongojs("localhost:27017/Game", ["account", "progress"]);  // mongod --
 // for example: db.account.insert({username: "b", password:"bb"});
 
 require("./Entity");
+require("./client/Inventory");
 
 var express = require("express");
 var app = express();
@@ -40,18 +41,9 @@ app.get("/", function(req, res) {
 app.use("/client", express.static(__dirname + "/client"));
 
 serv.listen(80);
-console.log("Server started; listening on port 80");
+console.log("Server started; listening on port 80"); 
 
-function sanitize(value) {
-  var lt = /</g, 
-  gt = />/g, 
-  ap = /'/g, 
-  ic = /"/g;
-  value = value.toString().replace(lt, "&lt;").replace(gt, "&gt;").replace(ap, "&#39;").replace(ic, "&#34;"); 
-  return value;
-} 
-
-var SOCKET_LIST = {};
+SOCKET_LIST = {};
 
 
 var DEBUG = true;

@@ -29,6 +29,7 @@
              Hello!
           </div>
         </div>
+		<div id = "inventory"></div>
         <form id = "chat-form">
           <input id = "chat-input" type = "text" style = "width: 500px;"> </input>
         </form>
@@ -36,6 +37,7 @@
     </div>
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"></script>
+	<script src = "/client/Inventory.js"></script>
     <script>      
       var WIDTH = 500;
       var HEIGHT = 500;
@@ -131,6 +133,12 @@
         socket.emit("changeMap");
       }
       
+	  var inventory = new Inventory(null); // null, because the inventory on the client does not need access to the socket.
+	  socket.on("updateInventory", function(items){
+		inventory.items = items;
+		inventory.refreshRender();
+	  });
+	  
       // game 
       var Img = {};
       Img.player = new Image();
@@ -361,10 +369,13 @@
 		event.preventDefault();	    
       }
 
-    </script> <!-- up to 7:36 https://www.youtube.com/watch?v=6ztcI568yho -->
+    </script> <!-- up to 0:00 https://www.youtube.com/watch?v=XcqMvkdP3KQ -->
 <!-- mongoDB https://www.youtube.com/watch?v=E-YYRLQSVDI -->
   </head>
-  
+  <!-- If you eval this 
+  Player.list[0.008218286241861605].inventory.addItem("potion", 1)
+  (put it in the chat with / in the beginning) a button will appear.
+  -->
   <body>
     <p> Hello world! </p>
     <button onclick = "happy()"> Happy </button>  <!-- Check with different tabs (because of the "random" variable)-->
