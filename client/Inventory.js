@@ -44,15 +44,23 @@ Inventory = function(socket) {
 			return; 
 		}
 		
+		
 		// client
-		var str = "";
-		for (var i = 0; i < self.items.length; i++) {
-			let item = Item.List[self.items[i].id];
-			let onclick = "Item.List['" + item.id + "'].event()";
-			str += "<button onclick=\"" + onclick + "\">" + item.name + " x" + self.items[i].amount + "</button><br>";
+		var inventory = document.getElementById("inventory"); 
+		inventory.innerHTML = "";
+		var addButton = function(data) {
+			let item = Item.List[data.id];
+			let button = document.createElement("button");
+			button.onclick = function() {
+				Item.List[item.id].event();
+			}
+			button.innerText = item.name + " x" + data.amount;
+			inventory.appendChild(button);
 		}
 		
-		document.getElementById("inventory").innerHTML = str;
+		for (var i = 0; i < self.items.length; i++) {
+			addButton(self.items[i])
+		}
 		
 	}
 	
