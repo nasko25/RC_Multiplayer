@@ -133,7 +133,7 @@
         socket.emit("changeMap");
       }
       
-	  var inventory = new Inventory(null); // null, because the inventory on the client does not need access to the socket.
+	  var inventory = new Inventory(socket, false); // null, because the inventory on the client does not need access to the socket.
 	  socket.on("updateInventory", function(items){
 		inventory.items = items;
 		inventory.refreshRender();

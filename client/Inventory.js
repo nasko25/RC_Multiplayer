@@ -1,7 +1,8 @@
-Inventory = function(socket) {
+Inventory = function(socket, server) {
 	var self = {
 		items:[], // {id:"itemid", amount:1}
-		socket:socket
+		socket:socket,
+		server: server
 	};
 	
 	self.addItem = function(id, amount) {
@@ -31,7 +32,7 @@ Inventory = function(socket) {
 	self.hasItem = function(id, amount) {
 		for( var i = 0; i < self.items.length; i++ ) {
 			if (self.items[i].id === id) {
-				return self.items.amount >= amount;
+				return self.items[i].amount >= amount;
 			}
 		}
 		return false;
@@ -39,7 +40,7 @@ Inventory = function(socket) {
 	
 	self.refreshRender = function() {
 		// server
-		if (self.socket) {
+		if (self.server) {
 			self.socket.emit("updateInventory", self.items);
 			return; 
 		}
@@ -49,10 +50,10 @@ Inventory = function(socket) {
 		var inventory = document.getElementById("inventory"); 
 		inventory.innerHTML = "";
 		var addButton = function(data) {
-			let item = Item.List[data.id];
+			let item = Item.list[data.id];
 			let button = document.createElement("button");
 			button.onclick = function() {
-				Item.List[item.id].event();
+				self.socket.emit("useItem", item.id);
 			}
 			button.innerText = item.name + " x" + data.amount;
 			inventory.appendChild(button);
@@ -61,9 +62,21 @@ Inventory = function(socket) {
 		for (var i = 0; i < self.items.length; i++) {
 			addButton(self.items[i])
 		}
-		
 	}
 	
+		//server 
+		if (self.server) {
+			socket.on("useItem", function(itemId) {
+				if(!self.hasItem(itemId, 1)) {
+					console.log("cheater");
+					return;
+				}
+				let item = Item.list[itemId];
+				item.event(Player.list[self.socket.id]);
+				
+			});
+		}
+		
 	return self;
 }
 
@@ -73,17 +86,20 @@ Item = function(id, name, event) {
 		name: name, 
 		event: event
 	};
-	Item.List[self.id] = self;
+	Item.list[self.id] = self;
 	return self; 
 }
 
-Item.List = {};
+Item.list = {};
 
-Item("potion", "Potion", function() {
+Item("potion", "Potion", function(player) {
 	player.hp = 10;
-	playerIntentory.removeItem("potion", 1);
+	player.inventory.removeItem("potion", 1);
+	player.inventory.addItem("superAttack", 1);
 }); 
 
-Item("enemy", "Spawn Enemy", function(){
-	Enemy.randomlyGenerate();
+Item("superAttack", "Super Attack", function(player){
+	for(var i = 0; i < 360; i++) {
+		player.shootBullet(i);
+	}
 });
