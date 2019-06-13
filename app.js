@@ -22,12 +22,7 @@
 startProfiling(10000);
 */
 
-var mongojs = require("mongojs");
-var db = mongojs("localhost:27017/Game", ["account", "progress"]);  // mongod --smallfiles --dbpath /home/cabox/workspace/db   to start the database
-// mongo - to query; use <name> 
-
-// for example: db.account.insert({username: "b", password:"bb"});
-
+require("./AccessDatabase");
 require("./Entity");
 require("./client/Inventory");
 
@@ -55,36 +50,6 @@ var USERS = {
   "a":"a"
 }
 
-var isValidPassword = function(data, cb) {
-  // whenever there is an interval between when you call the function, and the function returns a value (like when reading from a database) js needs callback to work. 
-  db.account.find({username: data.username, password: data.password}, function(err, res) {   // the err will return an error that may have occured while reading, while res is the result (returns an array with
-    // every document that matched the query)// TODO sql injection?
-    if (res.length > 0) { // check if there is at least one username with that password
-      cb(true);
-    }
-    else {
-      cb(false);
-    }
-  });
-}
-
-var isUsernameTaken = function(data, cb) {
- db.account.find({username: data.username}, function(err, res) {   // TODO sql injection?
-    if (res.length > 0) { 
-      cb(true);
-    }
-    else {
-      cb(false);
-    }
-  });
-}
-
-var addUser = function(data, cb) {
-   db.account.insert({username: data.username, password:data.password}, function(err) {   
-      cb();
-  });
-}
-
 var io = require("socket.io")(serv, {}); // loads the file ("socket.io") and initilizes it; it returns an io object that 
 // has all the functionalities of the socket.io library
 io.sockets.on("connection", function(socket) { // the function will be called, whenever there is a connection to the server.
@@ -93,7 +58,7 @@ io.sockets.on("connection", function(socket) { // the function will be called, w
   SOCKET_LIST[socket.id] = socket; // add the socket to the list of sockets. 
   
   socket.on("signIn", function(data) { // {username, password}
-    isValidPassword(data, function(res) {
+    AccessDatabase.isValidPassword(data, function(res) {
       if(res) {
           Player.onConnect(socket, data.username);
           socket.emit("signInResponse", {
@@ -109,14 +74,14 @@ io.sockets.on("connection", function(socket) { // the function will be called, w
   });
   
    socket.on("signUp", function(data) {
-    isUsernameTaken(data, function(res) {
+    AccessDatabase.isUsernameTaken(data, function(res) {
       if(res) {
         socket.emit("signUpResponse", {
           success: false
       })
     }
       else {
-        addUser(data, function() {
+        AccessDatabase.addUser(data, function() {
            socket.emit("signUpResponse", {
               success:true
           })
