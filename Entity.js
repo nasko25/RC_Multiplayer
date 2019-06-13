@@ -84,7 +84,7 @@ Player = function(param){
     self.hp = 10;
     self.hpMax = 10;
     self.score = 0;
-	self.inventory = new Inventory(param.socket, true);
+	self.inventory = new Inventory(param.progress.items, param.socket, true);
   
   var super_update = self.update;
   self.update = function() {
@@ -158,7 +158,7 @@ Player = function(param){
   return self;
 };
 Player.list = {} // there is only one list for every player
-Player.onConnect = function(socket, username) {
+Player.onConnect = function(socket, username, progress) {
   var map = "forest";
   if(Math.random() < 0.5) {
     map = "field";
@@ -167,9 +167,12 @@ Player.onConnect = function(socket, username) {
 	username: username, 
     id:socket.id,
     map:map,
-	socket:socket
+	socket:socket, 
+	progress: progress
   });
-    
+  // refresh the inventory when a player connects, so that he will have his previous inventory
+  player.inventory.refreshRender();
+  
   socket.on("keyPress", function(data){ // adds a listener for every keyPress package
     if(data.inputId === "left")
       player.pressingLeft = data.state;
@@ -230,8 +233,15 @@ Player.getAllInitPacks = function() {
 }
 
 Player.onDisconnect = function(socket) {
-  removePack.player.push(socket.id);
-  delete Player.list[socket.id];
+	let player = Player.list[socket.id];
+	if (!player)
+		return;
+	AccessDatabase.savePlayerProgress({
+		username: player.username,
+		items: player.inventory.items
+	});
+	removePack.player.push(socket.id);
+	delete Player.list[socket.id];
 }
 
 Player.update = function() {

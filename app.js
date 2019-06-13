@@ -59,17 +59,13 @@ io.sockets.on("connection", function(socket) { // the function will be called, w
   
   socket.on("signIn", function(data) { // {username, password}
     AccessDatabase.isValidPassword(data, function(res) {
-      if(res) {
-          Player.onConnect(socket, data.username);
-          socket.emit("signInResponse", {
-          success: true
-        })
-      }
-      else {
-          socket.emit("signInResponse", {
-          success:false
-        })
-      }
+		if(!res) 
+		  return socket.emit("signInResponse", { success:false });
+		
+		AccessDatabase.getPlayerProgress(data.username, function(progress) {
+			Player.onConnect(socket, data.username, progress);
+			socket.emit("signInResponse", { success: true }) 
+		});
     })
   });
   
