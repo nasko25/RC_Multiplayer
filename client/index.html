@@ -139,6 +139,25 @@
 		inventory.refreshRender();
 	  });
 	  
+	  // TODO player is shooting in a weird way, when the game is full screen; 
+	  // also the buttons for potions and super attack, and the chat are not accessible in full screen mode. 
+	  // You can add a button that toggles "full screen". 
+	  // Player should not be shooting when pressing the buttons. 
+	  // Add a bigger/better map. 
+	  // Make the character rotate, based on mouse position. 
+	  // https://www.youtube.com/watch?v=kU4pK254ssQ up to 3:25
+	  
+	  // canvas size - make full screen 
+	  /* let resizeCanvas = function() {
+		WIDTH = window.innerWidth;
+		HEIGHT = window.innerHeight;
+		document.getElementById("ctx").width = WIDTH;
+		document.getElementById("ctx").height = HEIGHT;
+	  }
+	  window.addEventListener("resize", function() {
+		resizeCanvas();
+	  });
+	  */
       // game 
       var Img = {};
       Img.player = new Image();
@@ -289,7 +308,7 @@
         if (!selfId) { // then you have not recieved an init package => do not draw
           return;
         }
-        ctx.clearRect(0, 0, 500, 500);
+        ctx.clearRect(0, 0, WIDTH, HEIGHT);
         drawMap();
         drawScore();
         for (var i in Player.list){
@@ -312,7 +331,7 @@
           return;
         }
         lastScore = Player.list[selfId].score;
-        ctxUI.clearRect(0, 0, 500, 500);
+        ctxUI.clearRect(0, 0, WIDTH, HEIGHT);
         ctxUI.fillStyle = "white";
         ctxUI.fillText(Player.list[selfId].score, 0, 30);
       }
