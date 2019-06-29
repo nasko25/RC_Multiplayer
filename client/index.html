@@ -23,7 +23,7 @@
         
       </div>
       
-      <div id = "belowGame" style = "margin-top: 520px;">
+      <div id = "belowGame" style = "position: absolute; margin-top: 520px; z-index:4;">
         <div id = "chat-text" style = "width:500px; height: 100px; overflow-y: scroll;">
           <div>
              Hello!
@@ -33,6 +33,9 @@
         <form id = "chat-form">
           <input id = "chat-input" type = "text" style = "width: 500px;"> </input>
         </form>
+		<button id = "fullScreenButton" value = "not fullscreenable" onclick = "fullScreen()" style = "z-index: 2;">
+            Make Full Screenable
+        </button>
       </div>
     </div>
     
@@ -140,24 +143,48 @@
 	  });
 	  
 	  // TODO player is shooting in a weird way, when the game is full screen; 
-	  // also the buttons for potions and super attack, and the chat are not accessible in full screen mode. 
-	  // You can add a button that toggles "full screen". 
+
+ 
 	  // Player should not be shooting when pressing the buttons. 
 	  // Add a bigger/better map. 
 	  // Make the character rotate, based on mouse position. 
 	  // https://www.youtube.com/watch?v=kU4pK254ssQ up to 3:25
 	  
 	  // canvas size - make full screen 
-	  /* let resizeCanvas = function() {
+	  let resizeCanvas = function() {
 		WIDTH = window.innerWidth;
 		HEIGHT = window.innerHeight;
 		document.getElementById("ctx").width = WIDTH;
 		document.getElementById("ctx").height = HEIGHT;
 	  }
-	  window.addEventListener("resize", function() {
-		resizeCanvas();
-	  });
-	  */
+	  let normalizeCanvas = function() {
+		WIDTH = 500;
+		HEIGHT = 500;
+		document.getElementById("ctx").width = WIDTH;
+		document.getElementById("ctx").height = HEIGHT;
+	  }
+	  
+	  
+	  let fullScreen = function() {
+		let fullScreenButton = document.getElementById("fullScreenButton").value;
+		console.log(fullScreenButton);
+		if(fullScreenButton === "not fullscreenable") {
+			document.getElementById("fullScreenButton").innerText = "Stop Changing Size";
+			document.getElementById("fullScreenButton").value = "fullscreenable"
+			resizeCanvas();
+			window.addEventListener("resize", resizeCanvas);
+		}
+		else if (fullScreenButton === "fullscreenable") {
+			document.getElementById("fullScreenButton").value = "not fullscreenable";
+			document.getElementById("fullScreenButton").innerText = "Make Full Screenable";
+			window.removeEventListener("resize", resizeCanvas);
+			normalizeCanvas();
+		}
+		else {
+			alert("Something with the Full Screen Button is wrong!");
+		}
+	  }
+	  
       // game 
       var Img = {};
       Img.player = new Image();
