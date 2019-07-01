@@ -1,5 +1,6 @@
 var mongojs = require("mongojs");
 var db = mongojs("localhost:27017/Game", ["account", "progress"]);  // mongod --smallfiles --dbpath /home/cabox/workspace/db   to start the database
+// (mongod --dbpath /home/chrome/download\ This\ id\ RC_Multiplayer\ -\ newer/db/)
 // mongo - to query; use <name> 
 
 // for example: db.account.insert({username: "b", password:"bb"});

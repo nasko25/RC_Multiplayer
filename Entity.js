@@ -91,6 +91,9 @@ Player = function(param){
     self.updateSpd();
     super_update(); // this is like calling super.update() - it will call the function from the parent class. 
     
+	// TODO add a boolean variable whether the mouse's X and Y coordinates are in an interval, where the mouse is above the chat or buttons
+	// so that the player should not shoot (if it is in full screen mode); (if not in full screen mode) the variable should be false
+	// when the mouse's coordinates are not above the window of the player. 
     if (self.pressingAttack) {
       // for (var i = -3; i < 3; i++)
       //  self.shootBullet(i * 10 + self.mouseAngle);   may be a special attack
