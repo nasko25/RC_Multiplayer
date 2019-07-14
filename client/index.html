@@ -156,12 +156,24 @@
 		HEIGHT = window.innerHeight;
 		document.getElementById("ctx").width = WIDTH;
 		document.getElementById("ctx").height = HEIGHT;
+		
+		socket.emit("changeScreenSize", {
+			fullscreenable: true,
+			width: WIDTH,
+			height: HEIGHT
+		}); // so the server will know the screen size
 	  }
 	  let normalizeCanvas = function() {
 		WIDTH = 500;
 		HEIGHT = 500;
 		document.getElementById("ctx").width = WIDTH;
 		document.getElementById("ctx").height = HEIGHT;
+		
+		socket.emit("changeScreenSize", {
+			fullscreenable: false,
+			width: WIDTH,
+			height: HEIGHT
+		}); // so the server will know the screen size
 	  }
 	  
 	  
@@ -183,6 +195,7 @@
 		else {
 			alert("Something with the Full Screen Button is wrong!");
 		}
+		
 	  }
 	  
       // game 

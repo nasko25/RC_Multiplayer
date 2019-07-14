@@ -102,4 +102,5 @@ Item("superAttack", "Super Attack", function(player){
 	for(var i = 0; i < 360; i++) {
 		player.shootBullet(i);
 	}
+	player.inventory.removeItem("superAttack", 50)
 });
