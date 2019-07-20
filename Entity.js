@@ -97,8 +97,7 @@ Player = function(param){
     if (self.pressingAttack) {
       // for (var i = -3; i < 3; i++)
       //  self.shootBullet(i * 10 + self.mouseAngle);   may be a special attack
-     self.shootBullet(self.mouseAngle);
-	  // TODO:1 listen for a packet from the user that will carry the screen size 	 
+     self.shootBullet(self.mouseAngle);	 
     }
   }
   
@@ -162,6 +161,7 @@ Player = function(param){
   return self;
 };
 Player.list = {} // there is only one list for every player
+
 Player.onConnect = function(socket, username, progress) {
   var map = "forest";
   if(Math.random() < 0.5) {
@@ -219,6 +219,10 @@ Player.onConnect = function(socket, username, progress) {
     	recipientSocket.emit("addToChat", "From " + player.username + ":" + data.message);
    	socket.emit("addToChat", "To " + data.username + ":" + data.message);
     }
+ });
+// TODO:1 do something with that info: 
+ socket.on("changeScreenSize", function(data) {
+	console.log(data);
  });
 
   socket.emit("init", {
