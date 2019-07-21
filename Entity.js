@@ -85,6 +85,8 @@ Player = function(param){
     self.hpMax = 10;
     self.score = 0;
 	self.inventory = new Inventory(param.progress.items, param.socket, true);
+	self.width = 500; self.height = 500;
+	self.fullscreenable = false;
   
   var super_update = self.update;
   self.update = function() {
@@ -221,8 +223,10 @@ Player.onConnect = function(socket, username, progress) {
     }
  });
 // TODO:1 do something with that info: 
- socket.on("changeScreenSize", function(data) {
-	console.log(data);
+ socket.on("changeScreenSize", function(data) {  // data looks like this { fullscreenable: true, width: 1181, height: 553 }
+	player.fullscreenable = data.fullscreenable; 
+	player.width = data.width;
+	player.height = data.height;
  });
 
   socket.emit("init", {

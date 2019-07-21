@@ -11,9 +11,9 @@
     </div>
     <!--- TODO add a css file --->
     <div id = "gameDiv" style = "display:none;">
-      <div id = "game" style = "position:absolute; width:500px; height: 500px;">
+      <div id = "game" style = "position:absolute; width: 500px; height: 500px;">
         <canvas id = "ctx" width = "500" height = "500" style = "position: absolute; border:1px solid #000000;"> </canvas>
-        <canvas id = "ctx-ui" width = "500" height = "500" style = "position:absolute; z-index: 2; border:1px solid #000000;"> </canvas>
+        <canvas id = "ctx-ui" width = "500" height = "500" style = "position:absolute; z-index: 2;"> </canvas>
         
         <div id = "ui" style = "position: absolute; width:500px; height: 500px;">
           <button onclick = "changeMap()" style = "position:absolute; bottom:0px; left:0px; z-index: 2;">
@@ -142,7 +142,7 @@
 		inventory.refreshRender();
 	  });
 	  
-	  // TODO player is shooting in a weird way, when the game is full screen; 
+	  // TODO
 
  
 	  // Player should not be shooting when pressing the buttons. 
@@ -418,8 +418,8 @@
       }
       
       document.onmousemove = function(event) {
-        var x = -250 + event.clientX - 8;
-        var y = -250 + event.clientY - 8;
+        var x = -WIDTH/2 + event.clientX - 8;
+        var y = -HEIGHT/2 + event.clientY - 8;
         var angle = Math.atan2(y,x) / Math.PI * 180;
         socket.emit("keyPress", {inputId: "mouseAngle", state:angle});
       }
