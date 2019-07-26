@@ -2,7 +2,8 @@
 <html>
   <head>
     <title> Multiplayer </title>
-    
+    </head>
+	<body style = "margin:0px;">
     <div id = "signDiv">
       Username: <input id = "signDiv-username" type = "text"> </input> <br>
       Password: <input id = "signDiv-password" type = "password"> </input>
@@ -38,7 +39,8 @@
         </button>
       </div>
     </div>
-    
+    </body>
+	
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"></script>
 	<script src = "/client/Inventory.js"></script>
     <script>      
@@ -148,14 +150,16 @@
 	  // Player should not be shooting when pressing the buttons. 
 	  // Add a bigger/better map. 
 	  // Make the character rotate, based on mouse position. 
-	  // https://www.youtube.com/watch?v=kU4pK254ssQ up to 3:25
+	  // https://www.youtube.com/watch?v=1y57COMRSdA up to 0:00
 	  
 	  // canvas size - make full screen 
 	  let resizeCanvas = function() {
-		WIDTH = window.innerWidth;
-		HEIGHT = window.innerHeight;
+		WIDTH = window.innerWidth - 4;
+		HEIGHT = window.innerHeight - 4;
 		document.getElementById("ctx").width = WIDTH;
 		document.getElementById("ctx").height = HEIGHT;
+		// style.top of id = game should be = 14
+		document.getElementById("game").style.top = "0px";
 		
 		socket.emit("changeScreenSize", {
 			fullscreenable: true,
@@ -168,6 +172,8 @@
 		HEIGHT = 500;
 		document.getElementById("ctx").width = WIDTH;
 		document.getElementById("ctx").height = HEIGHT;
+		// style.top of id = game should be = 0
+		document.getElementById("game").style.top = "14px";
 		
 		socket.emit("changeScreenSize", {
 			fullscreenable: false,
