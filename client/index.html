@@ -158,7 +158,7 @@
 		HEIGHT = window.innerHeight - 4;
 		document.getElementById("ctx").width = WIDTH;
 		document.getElementById("ctx").height = HEIGHT;
-		// style.top of id = game should be = 14
+
 		document.getElementById("game").style.top = "0px";
 		
 		socket.emit("changeScreenSize", {
@@ -172,7 +172,7 @@
 		HEIGHT = 500;
 		document.getElementById("ctx").width = WIDTH;
 		document.getElementById("ctx").height = HEIGHT;
-		// style.top of id = game should be = 0
+
 		document.getElementById("game").style.top = "14px";
 		
 		socket.emit("changeScreenSize", {
