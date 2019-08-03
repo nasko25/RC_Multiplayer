@@ -2,6 +2,16 @@
 <html>
   <head>
     <title> Multiplayer </title>
+	<style> 
+		.unselectable {
+			-webkit-touch-callout: none;
+			-webkit-user-select: none;
+			-khtml-user-select: none;
+			-moz-user-select: none;
+			-ms-user-select: none;
+			user-select: none;
+		}
+	</style>
     </head>
 	<body style = "margin:0px;">
     <div id = "signDiv">
@@ -17,14 +27,14 @@
         <canvas id = "ctx-ui" width = "500" height = "500" style = "position:absolute; z-index: 2;"> </canvas>
         
         <div id = "ui" style = "position: absolute; width:500px; height: 500px;">
-          <button onclick = "changeMap()" style = "position:absolute; bottom:0px; left:0px; z-index: 2;">
+          <button onclick = "changeMap()" class = "unselectable" style = "position:absolute; bottom:0px; left:0px; z-index: 2;">
             Change Map
           </button>
         </div>
         
       </div>
       
-      <div id = "belowGame" style = "position: absolute; margin-top: 520px; z-index:4;">
+      <div id = "belowGame" class = "unselectable" style = "position: absolute; margin-top: 520px; z-index:4;">
         <div id = "chat-text" style = "width:500px; height: 100px; overflow-y: scroll;">
           <div>
              Hello!
@@ -436,14 +446,9 @@
 
     </script> <!-- done with the tutorial! -->
 <!-- mongoDB https://www.youtube.com/watch?v=E-YYRLQSVDI -->
-  </head>
+
   <!-- If you eval this 
   Player.list[0.008218286241861605].inventory.addItem("potion", 1)
   (put it in the chat with / in the beginning) a button will appear.
   -->
-  <body>
-    <p> Hello world! </p>
-    <button onclick = "happy()"> Happy </button>  <!-- Check with different tabs (because of the "random" variable)-->
- 
-  </body>
 </html>
