@@ -437,13 +437,30 @@
         var x = -WIDTH/2 + event.clientX - 8;
         var y = -HEIGHT/2 + event.clientY - 8;
         var angle = Math.atan2(y,x) / Math.PI * 180;
-        socket.emit("keyPress", {inputId: "mouseAngle", state:angle});
+        socket.emit("keyPress", {inputId: "mouseAngle", state:angle, x:x, y:y, can_shoot:can_shoot});
       }
 
       document.oncontextmenu = function(event) {
 		event.preventDefault();	    
       }
-
+	  
+	  var can_shoot = false;
+	  var setShootable = function(shoot) {
+		can_shoot = shoot;
+	  }
+	  
+		document.getElementById('belowGame').onmouseover = function() {
+			setShootable(false);
+		}; 
+		document.getElementById('belowGame').onmouseout = function() {
+			setShootable(true);
+		}; 
+		document.getElementById('ui').onmouseover = function() {
+			setShootable(false);
+		}; 
+		document.getElementById('ui').onmouseout = function() {
+			setShootable(true);
+		}; 
     </script> <!-- done with the tutorial! -->
 <!-- mongoDB https://www.youtube.com/watch?v=E-YYRLQSVDI -->
 

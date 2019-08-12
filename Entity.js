@@ -80,6 +80,8 @@ Player = function(param){
     self.pressingDown = false;
     self.pressingAttack = false;
     self.mouseAngle = 0;
+	self.mouseX = 0;
+	self.mouseY = 0;
     self.maxSpd = 10;
     self.hp = 10;
     self.hpMax = 10;
@@ -87,6 +89,7 @@ Player = function(param){
 	self.inventory = new Inventory(param.progress.items, param.socket, true);
 	self.width = 500; self.height = 500;
 	self.fullscreenable = false;
+	self.can_shoot = false;
   
   var super_update = self.update;
   self.update = function() {
@@ -99,7 +102,9 @@ Player = function(param){
     if (self.pressingAttack) {
       // for (var i = -3; i < 3; i++)
       //  self.shootBullet(i * 10 + self.mouseAngle);   may be a special attack
-     self.shootBullet(self.mouseAngle);	 
+	
+		if ((!self.fullscreenable&&(self.mouseX>=-258&&self.mouseX<=243)&&(self.mouseY>=-245 && self.mouseY<=237))||(self.fullscreenable && self.can_shoot))
+			self.shootBullet(self.mouseAngle);	
     }
   }
   
@@ -190,8 +195,12 @@ Player.onConnect = function(socket, username, progress) {
       player.pressingDown = data.state;
     else if(data.inputId === "attack")
       player.pressingAttack = data.state;
-    else if(data.inputId === "mouseAngle")
-      player.mouseAngle = data.state;    
+    else if(data.inputId === "mouseAngle") {
+		player.mouseAngle = data.state;  
+		player.mouseX = data.x;
+		player.mouseY = data.y;
+		player.can_shoot = data.can_shoot;
+	}
   });
 
   socket.on("changeMap", function() {
